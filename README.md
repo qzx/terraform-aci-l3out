@@ -1,31 +1,42 @@
-# terraform-aci-vpc-l3out
+# terraform-aci-l3out
 
-Terraform module to set up an L3Out with one or more VPCs, one in each DC
+Terraform module for Cisco ACI's L3Out configuration, supports high availability
+via multiple paths. Supports vpc, port-channel and single interface paths.
+Has support for ospf and bgp. To enable ospf ospf\_enable must be set, if there are
+any BGP settings, they will get applied
 
 # Example, over configured
 
 ```hcl
-module "aci_vpc_l3out" {
-  #source = "github.com/qzx/terraform-aci-vpc-l3out"
+module "aci_l3out" {
 
-  source      = "../terraform-aci-vpc-l3out"
+  source      = "qzx/l3out/aci"
+  version     = "v0.0.1"
   name        = "L3OUT-NAME"
   tenant_name = "example"
   vrf         = "example"
   l3_domain   = "l3 domain name"
 
-  interconnect_subnet = "172.16.0.1/29"
-
   router_id_as_loopback = true
 
   paths = {
     primary = {
-      name    = "EXAMPLE-VPC"
-      pod_id  = 1
-      nodes   = [101, 102]
-      is_vpc  = true
-      vlan_id = 301
-      mtu     = 1500
+      name                = "EXAMPLE-VPC"
+      pod_id              = 1
+      nodes               = [101, 102]
+      vlan_id             = 301
+      mtu                 = 1500
+      is_vpc              = true
+      interconnect_subnet = "172.16.0.0/29"
+    },
+    secondary = {
+      name                = "EXAMPLE-SINGLE-INTERFACE"
+      pod_id              = 1
+      nodes               = [103]
+      vlan_id             = 609
+      mtu                 = 1500
+      is_vpc              = false
+      interconnect_subnet = "172.16.1.0/30"
     }
   }
 
@@ -122,14 +133,13 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_bgp_peers"></a> [bgp\_peers](#input\_bgp\_peers) | BGP Neighbour configuration, having a neighbour causes BGP to be enabled, nodes must have loopbacks (enable router\_id\_as\_loopback) | <pre>map(object({<br>    address   = string,<br>    local_as  = number,<br>    remote_as = number,<br>    password  = string,<br>  }))</pre> | `{}` | no |
 | <a name="input_external_epgs"></a> [external\_epgs](#input\_external\_epgs) | Map of external EPGs to create as network objects | <pre>map(object({<br>    subnets = list(string),<br>    scope   = list(string),<br>  }))</pre> | <pre>{<br>  "default": {<br>    "scope": [<br>      "import-security"<br>    ],<br>    "subnets": [<br>      "0.0.0.0/0"<br>    ]<br>  }<br>}</pre> | no |
-| <a name="input_interconnect_subnet"></a> [interconnect\_subnet](#input\_interconnect\_subnet) | The interconnect subnet to use, the module will increment by 1 before each IP allocation, and take the last address as floating IP for static routing | `string` | n/a | yes |
 | <a name="input_l3_domain"></a> [l3\_domain](#input\_l3\_domain) | The Layer3 domain this L3Out belongs to | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | Affix to use for our generated L3Out name | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Name of our new L3Out | `string` | n/a | yes |
 | <a name="input_ospf_area"></a> [ospf\_area](#input\_ospf\_area) | OSPF Area settings | <pre>object({<br>    id   = number,<br>    type = string,<br>    cost = number,<br>  })</pre> | <pre>{<br>  "cost": 1,<br>  "id": 0,<br>  "type": "regular"<br>}</pre> | no |
 | <a name="input_ospf_auth"></a> [ospf\_auth](#input\_ospf\_auth) | OSPF authentication settings if ospf is enabled, key\_id can range from 1-255 and key\_type can be: md5, simple or none | <pre>object({<br>    key    = string,<br>    key_id = number,<br>    type   = string,<br>  })</pre> | <pre>{<br>  "key": "",<br>  "key_id": 1,<br>  "type": "none"<br>}</pre> | no |
 | <a name="input_ospf_enable"></a> [ospf\_enable](#input\_ospf\_enable) | Enable OSPF, timers and area settings can be over written with ospf\_area and ospf\_timers | `bool` | `false` | no |
 | <a name="input_ospf_timers"></a> [ospf\_timers](#input\_ospf\_timers) | Optional ospf timing configuration to pass on, sensible defaults are provided | <pre>object({<br>    hello_interval      = number,<br>    dead_interval       = number,<br>    retransmit_interval = number,<br>    transmit_delay      = number,<br>    priority            = number,<br>  })</pre> | <pre>{<br>  "dead_interval": 40,<br>  "hello_interval": 10,<br>  "priority": 1,<br>  "retransmit_interval": 5,<br>  "transmit_delay": 1<br>}</pre> | no |
-| <a name="input_paths"></a> [paths](#input\_paths) | The interface path to which we will deploy the L3Out | <pre>map(object({<br>    name    = string,<br>    pod_id  = number,<br>    nodes   = list(number),<br>    is_vpc  = bool,<br>    vlan_id = number,<br>    mtu     = number,<br>  }))</pre> | n/a | yes |
+| <a name="input_paths"></a> [paths](#input\_paths) | The interface path to which we will deploy the L3Out | <pre>map(object({<br>    name    = string,<br>    pod_id  = number,<br>    nodes   = list(number),<br>    is_vpc  = bool,<br>    vlan_id = number,<br>    mtu     = number,<br>    interconnect_subnet = string,<br>  }))</pre> | n/a | yes |
 | <a name="input_router_id_as_loopback"></a> [router\_id\_as\_loopback](#input\_router\_id\_as\_loopback) | Set to true if router IDs should be installed as loopback addresses to respective switches | `bool` | `false` | no |
 | <a name="input_static_routes"></a> [static\_routes](#input\_static\_routes) | List of subnets in CIDR notation to be statically routed to the first IP address of the interconnect subnet | `list(string)` | `[]` | no |
 | <a name="input_static_subnets"></a> [static\_subnets](#input\_static\_subnets) | List of subnets that are to be statically routed to the bottom address | `list(string)` | `[]` | no |

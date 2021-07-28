@@ -10,7 +10,7 @@
  * # Example, over configured
  *
  * ```hcl
- * module "aci_vpc_l3out" {
+ * module "aci_l3out" {
  * 
  *   source      = "qzx/l3out/aci"
  *   version     = "v0.0.1"
