@@ -13,7 +13,7 @@
  * module "aci_l3out" {
  * 
  *   source      = "qzx/l3out/aci"
- *   version     = "v0.0.1"
+ *   version     = "v0.0.2"
  *   name        = "L3OUT-NAME"
  *   tenant_name = "example"
  *   vrf         = "example"

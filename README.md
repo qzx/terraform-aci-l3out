@@ -11,7 +11,7 @@ any BGP settings, they will get applied
 module "aci_l3out" {
 
   source      = "qzx/l3out/aci"
-  version     = "v0.0.1"
+  version     = "v0.0.2"
   name        = "L3OUT-NAME"
   tenant_name = "example"
   vrf         = "example"
@@ -142,7 +142,6 @@ No modules.
 | <a name="input_paths"></a> [paths](#input\_paths) | The interface path to which we will deploy the L3Out | <pre>map(object({<br>    name    = string,<br>    pod_id  = number,<br>    nodes   = list(number),<br>    is_vpc  = bool,<br>    vlan_id = number,<br>    mtu     = number,<br>    interconnect_subnet = string,<br>  }))</pre> | n/a | yes |
 | <a name="input_router_id_as_loopback"></a> [router\_id\_as\_loopback](#input\_router\_id\_as\_loopback) | Set to true if router IDs should be installed as loopback addresses to respective switches | `bool` | `false` | no |
 | <a name="input_static_routes"></a> [static\_routes](#input\_static\_routes) | List of subnets in CIDR notation to be statically routed to the first IP address of the interconnect subnet | `list(string)` | `[]` | no |
-| <a name="input_static_subnets"></a> [static\_subnets](#input\_static\_subnets) | List of subnets that are to be statically routed to the bottom address | `list(string)` | `[]` | no |
 | <a name="input_tenant_name"></a> [tenant\_name](#input\_tenant\_name) | The tenant we want to deploy our L3Out into | `string` | n/a | yes |
 | <a name="input_vrf"></a> [vrf](#input\_vrf) | The associated VRF we are deploying into | `string` | n/a | yes |
 | <a name="input_vrf_id"></a> [vrf\_id](#input\_vrf\_id) | The ID of the VRF being used, this is required for the router ID generation if the module is already managing an L3Out in the same tenant but different VRF | `number` | `1` | no |

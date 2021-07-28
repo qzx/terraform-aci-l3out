@@ -30,12 +30,6 @@ variable "router_id_as_loopback" {
   default     = false
 }
 
-variable "static_subnets" {
-  type        = list(string)
-  description = "List of subnets that are to be statically routed to the bottom address"
-  default     = []
-}
-
 variable "paths" {
   type = map(object({
     name    = string,
