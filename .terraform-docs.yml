@@ -8,17 +8,17 @@ content: |-
   Location in GUI:
   `Tenants/Networking/L3Outs`
   ## Examples
-  # Minimal L3Out config
+  ### Minimal L3Out config
   ```hcl
   {{ include "./examples/minimal/main.tf" }}
   ```
 
-  # L3Out over dual VPC in two pods with OSPF
+  ### L3Out over dual VPC in two pods with OSPF
   ```hcl
   {{ include "./examples/vpc/main.tf" }}
   ```
 
-  # Dual L3Out with BGP 
+  ### Dual L3Out with BGP 
   ```hcl
   {{ include "./examples/ha-mpls/main.tf" }}
   ```
