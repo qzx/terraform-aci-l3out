@@ -1,30 +1,35 @@
 <!-- BEGIN_TF_DOCS -->
-## Requirements
+# Minimal L3Out example with static route
+To run this example you need to execute:
+```bash
+$ terraform init
+$ terraform plan
+$ terraform apply
+```
+Note that this example will create resources. Resources can be destroyed with `terraform destroy`.
+```hcl
+module "aci_l3out" {
+  source  = "qzx/l3out/aci"
+  version = "0.0.2"
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aci"></a> [aci](#requirement\_aci) | ~> 0.7.0 |
+  name        = "example-l3out"
+  tenant_name = "example"
+  vrf         = "example"
+  l3_domain   = "example-l3out-domain"
 
-## Providers
+  paths = {
+    primary = {
+      name                = "eth1/2"
+      pod_id              = 1
+      nodes               = [101]
+      is_vpc              = false
+      vlan_id             = 301
+      mtu                 = 1500
+      interconnect_subnet = "172.16.0.0/30"
+    }
+  }
 
-No providers.
-
-## Modules
-
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_aci_l3out"></a> [aci\_l3out](#module\_aci\_l3out) | qzx/l3out/aci | 0.0.2 |
-
-## Resources
-
-No resources.
-
-## Inputs
-
-No inputs.
-
-## Outputs
-
-No outputs.
+  static_routes = ["0.0.0.0/0"]
+}
+```
 <!-- END_TF_DOCS -->

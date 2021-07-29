@@ -1,30 +1,71 @@
 <!-- BEGIN_TF_DOCS -->
-## Requirements
+# Dual path L3Out with BGP
+To run this example you need to execute:
+```bash
+$ terraform init
+$ terraform plan
+$ terraform apply
+```
+Note that this example will create resources. Resources can be destroyed with `terraform destroy`.
+```hcl
+module "aci_ha_mpls_l3out" {
+  source  = "qzx/l3out/aci"
+  version = "0.0.2"
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aci"></a> [aci](#requirement\_aci) | ~> 0.7.0 |
+  name        = "example-l3out"
+  tenant_name = "example"
+  vrf         = "example"
+  l3_domain   = "MPLS-Provider-L3-Domain"
 
-## Providers
 
-No providers.
+  router_id_as_loopback = true
 
-## Modules
+  paths = {
+    primary = {
+      name                = "eth1/22"
+      pod_id              = 1
+      nodes               = [101]
+      is_vpc              = false
+      vlan_id             = 301
+      mtu                 = 1500
+      interconnect_subnet = "172.16.1.0/29"
+    },
+    primary = {
+      name                = "eth1/22"
+      pod_id              = 1
+      nodes               = [102]
+      is_vpc              = false
+      vlan_id             = 301
+      mtu                 = 1500
+      interconnect_subnet = "172.16.1.4/29"
+    }
+  }
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_aci_ha_mpls_l3out"></a> [aci\_ha\_mpls\_l3out](#module\_aci\_ha\_mpls\_l3out) | qzx/l3out/aci | 0.0.2 |
+  external_epgs = {
+    FW-Subnets = {
+      subnets = ["0.0.0.0/0"]
+      scope   = ["import-security"]
+    }
+    Servers = {
+      subnets = ["10.0.0.0/8", "192.168.0.0/16", "172.16.0.0/12"]
+      scope   = ["shared-rtctrl", "shared-security", "import-security"]
+    }
+  }
 
-## Resources
-
-No resources.
-
-## Inputs
-
-No inputs.
-
-## Outputs
-
-No outputs.
+  bgp_peers = {
+    primary = {
+      address   = "172.16.1.1"
+      local_as  = 10
+      remote_as = 200
+      password  = "provider-password-1"
+    },
+    secondary = {
+      address   = "172.16.1.5"
+      local_as  = 10
+      remote_as = 300
+      password  = "provider-password-2"
+    }
+  }
+}
+```
 <!-- END_TF_DOCS -->

@@ -1,30 +1,58 @@
 <!-- BEGIN_TF_DOCS -->
-## Requirements
+# Dual VPC L3Out with OSPF Example
+To run this example you need to execute:
+```bash
+$ terraform init
+$ terraform plan
+$ terraform apply
+```
+Note that this example will create resources. Resources can be destroyed with `terraform destroy`.
+```hcl
+module "aci_vpc_l3out" {
+  source  = "qzx/l3out/aci"
+  version = "0.0.2"
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aci"></a> [aci](#requirement\_aci) | ~> 0.7.0 |
+  name        = "example-l3out"
+  tenant_name = "example"
+  vrf         = "example"
+  l3_domain   = "example-l3out-domain"
 
-## Providers
+  paths = {
+    primary = {
+      name                = "EXAMPLE-VPC"
+      pod_id              = 1
+      nodes               = [101, 102]
+      is_vpc              = true
+      vlan_id             = 301
+      mtu                 = 1500
+      interconnect_subnet = "172.16.0.1/29"
+    },
+    secondary = {
+      name                = "EXAMPLE-VPC"
+      pod_id              = 2
+      nodes               = [103, 104]
+      is_vpc              = true
+      vlan_id             = 301
+      mtu                 = 1500
+      interconnect_subnet = "172.16.0.1/29"
+    }
+  }
 
-No providers.
+  ospf_enable = false
 
-## Modules
+  ospf_timers = {
+    hello_interval      = 5
+    dead_interval       = 25
+    retransmit_interval = 3
+    transmit_delay      = 1
+    priority            = 1
+  }
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_aci_vpc_l3out"></a> [aci\_vpc\_l3out](#module\_aci\_vpc\_l3out) | qzx/l3out/aci | 0.0.2 |
-
-## Resources
-
-No resources.
-
-## Inputs
-
-No inputs.
-
-## Outputs
-
-No outputs.
+  ospf_area = {
+    id   = 1
+    type = "nssa"
+    cost = 1
+  }
+}
+```
 <!-- END_TF_DOCS -->
