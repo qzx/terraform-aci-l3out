@@ -23,7 +23,7 @@ variable "vrf" {
   description = "The associated VRF we are deploying into"
 
   validation {
-    condition     = can(regex("^[a-zA-Z0-9_.-]{0,64}$", var.name))
+    condition     = can(regex("^[a-zA-Z0-9_.-]{0,64}$", var.vrf))
     error_message = "Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `-`. Maximum characters: 64."
   }
 }
@@ -35,7 +35,7 @@ variable "vrf_id" {
 
   validation {
     condition     = var.vrf_id >= 1 && var.vrf_id <= 254
-    error_message = "Value has to be between 1 and 254"
+    error_message = "Value has to be between 1 and 254."
   }
 }
 
@@ -52,12 +52,12 @@ variable "router_id_as_loopback" {
 
 variable "paths" {
   type = map(object({
-    name    = string,
-    pod_id  = number,
-    nodes   = list(number),
-    is_vpc  = bool,
-    vlan_id = number,
-    mtu     = number,
+    name                = string,
+    pod_id              = number,
+    nodes               = list(number),
+    is_vpc              = bool,
+    vlan_id             = number,
+    mtu                 = number,
     interconnect_subnet = string,
   }))
   description = "The interface path to which we will deploy the L3Out"
@@ -162,11 +162,11 @@ locals {
     flatten([
       for path_key, path in var.paths : [
         for node in path.nodes : {
-          node      = "topology/pod-${path.pod_id}/node-${node}"
-          router_id = "1.${path.pod_id}.${node}.${var.vrf_id}"
-          path_key  = path_key
-          node_id   = node
-          is_vpc    = path.is_vpc
+          node                = "topology/pod-${path.pod_id}/node-${node}"
+          router_id           = "1.${path.pod_id}.${node}.${var.vrf_id}"
+          path_key            = path_key
+          node_id             = node
+          is_vpc              = path.is_vpc
           interconnect_subnet = path.interconnect_subnet
         }
       ]
@@ -177,53 +177,53 @@ locals {
 locals {
   vpc_ip_addresses = {
     for node in local.vpc_nodes : node.node => {
-      path_key   = node.path_key
-      ip_address = join("/", 
+      path_key = node.path_key
+      ip_address = join("/",
         [
-        cidrhost(
-            node.interconnect_subnet, 
+          cidrhost(
+            node.interconnect_subnet,
             (index(local.node_list, node) + 2)
-        ), 
-        split("/", node.interconnect_subnet)[1]
+          ),
+          split("/", node.interconnect_subnet)[1]
         ]
       )
-      side       = (node.node_id % 2 == 0 ? "B" : "A")
-      floating_address = join("/", 
+      side = (node.node_id % 2 == 0 ? "B" : "A")
+      floating_address = join("/",
         [
-        cidrhost(
-            node.interconnect_subnet, 
+          cidrhost(
+            node.interconnect_subnet,
             -2
-        ), 
-        split("/", node.interconnect_subnet)[1]
+          ),
+          split("/", node.interconnect_subnet)[1]
         ]
       )
-    } 
+    }
   }
 }
 
 locals {
-    paths = {
-        for key, path in var.paths : key => {
-            name    = path.name,
-            pod_id  = path.pod_id,
-            nodes   = path.nodes,
-            is_vpc  = path.is_vpc,
-            vlan_id = path.vlan_id,
-            mtu     = path.mtu,
-            address = path.is_vpc ? "0.0.0.0" : join("/",
-                [
-                cidrhost(
-                    path.interconnect_subnet,
-                    -2
-                ),
-                split("/", path.interconnect_subnet)[1]
-                ]
-            )
-            interconnect_subnet = path.interconnect_subnet
-        }
+  paths = {
+    for key, path in var.paths : key => {
+      name    = path.name,
+      pod_id  = path.pod_id,
+      nodes   = path.nodes,
+      is_vpc  = path.is_vpc,
+      vlan_id = path.vlan_id,
+      mtu     = path.mtu,
+      address = path.is_vpc ? "0.0.0.0" : join("/",
+        [
+          cidrhost(
+            path.interconnect_subnet,
+            -2
+          ),
+          split("/", path.interconnect_subnet)[1]
+        ]
+      )
+      interconnect_subnet = path.interconnect_subnet
     }
-    external_epgs = var.external_epgs
-    vrf = var.vrf
+  }
+  external_epgs = var.external_epgs
+  vrf           = var.vrf
 }
 
 
@@ -238,9 +238,9 @@ locals {
       }
     ]
   ])
-  domain           = var.l3_domain
-  name             = var.name
-  tenant_name      = var.tenant_name
+  domain      = var.l3_domain
+  name        = var.name
+  tenant_name = var.tenant_name
 }
 
 locals {
@@ -264,7 +264,7 @@ locals {
     for node in local.node_list : node.node => node
   }
   vpc_nodes = {
-      for node in local.node_list : node.node => node if node.is_vpc
+    for node in local.node_list : node.node => node if node.is_vpc
   }
   external_subnets = {
     for subnet in local.external_subnet_list : subnet.key => subnet

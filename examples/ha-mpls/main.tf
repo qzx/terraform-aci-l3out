@@ -1,6 +1,6 @@
 module "aci_ha_mpls_l3out" {
-  source      = "qzx/l3out/aci"
-  version     = "0.0.2"
+  source  = "qzx/l3out/aci"
+  version = "0.0.2"
 
   name        = "example-l3out"
   tenant_name = "example"
@@ -12,21 +12,21 @@ module "aci_ha_mpls_l3out" {
 
   paths = {
     primary = {
-      name    = "eth1/22"
-      pod_id  = 1
-      nodes   = [101]
-      is_vpc  = false
-      vlan_id = 301
-      mtu     = 1500
+      name                = "eth1/22"
+      pod_id              = 1
+      nodes               = [101]
+      is_vpc              = false
+      vlan_id             = 301
+      mtu                 = 1500
       interconnect_subnet = "172.16.1.0/29"
     },
     primary = {
-      name    = "eth1/22"
-      pod_id  = 1
-      nodes   = [102]
-      is_vpc  = false
-      vlan_id = 301
-      mtu     = 1500
+      name                = "eth1/22"
+      pod_id              = 1
+      nodes               = [102]
+      is_vpc              = false
+      vlan_id             = 301
+      mtu                 = 1500
       interconnect_subnet = "172.16.1.4/29"
     }
   }
@@ -47,13 +47,13 @@ module "aci_ha_mpls_l3out" {
       address   = "172.16.1.1"
       local_as  = 10
       remote_as = 200
-      password = "provider-password-1"
+      password  = "provider-password-1"
     },
     secondary = {
       address   = "172.16.1.5"
       local_as  = 10
       remote_as = 300
-      password = "provider-password-2"
+      password  = "provider-password-2"
     }
   }
 }

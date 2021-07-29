@@ -12,10 +12,12 @@ content: |-
   ```hcl
   {{ include "./examples/minimal/main.tf" }}
   ```
-   ```hcl
+
+  ```hcl
   {{ include "./examples/vpc/main.tf" }}
   ```
-   ```hcl
+
+  ```hcl
   {{ include "./examples/ha-mpls/main.tf" }}
   ```
   {{ .Requirements }}
