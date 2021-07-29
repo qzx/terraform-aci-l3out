@@ -1,0 +1,31 @@
+version: '>= 0.14.0'
+
+formatter: markdown table
+
+content: |-
+  [![Tests](https://github.com/netascode/terraform-aci-tenant/actions/workflows/test.yml/badge.svg)](https://github.com/netascode/terraform-aci-tenant/actions/workflows/test.yml)
+  # Terraform ACI L3Out Module
+  Manages ACI L3Out
+  Location in GUI:
+  `Tenants/Networking/L3Outs`
+  ## Examples
+  ```hcl
+  {{ include "./examples/minimal/main.tf" }}
+  ```
+   ```hcl
+  {{ include "./examples/vpc/main.tf" }}
+  ```
+   ```hcl
+  {{ include "./examples/ha-mpls/main.tf" }}
+  ```
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Inputs }}
+  {{ .Outputs }}
+  {{ .Resources }}
+output:
+  file: README.md
+  mode: replace
+
+sort:
+  enabled: false

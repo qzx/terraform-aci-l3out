@@ -1,22 +1,42 @@
 variable "name" {
   type        = string
   description = "Name of our new L3Out"
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_.-]{0,64}$", var.name))
+    error_message = "Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `-`. Maximum characters: 64."
+  }
 }
 
 variable "tenant_name" {
   type        = string
   description = "The tenant we want to deploy our L3Out into"
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_.-]{0,64}$", var.tenant_name))
+    error_message = "Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `-`. Maximum characters: 64."
+  }
 }
 
 variable "vrf" {
   type        = string
   description = "The associated VRF we are deploying into"
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_.-]{0,64}$", var.name))
+    error_message = "Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `-`. Maximum characters: 64."
+  }
 }
 
 variable "vrf_id" {
   type        = number
   description = "The ID of the VRF being used, this is required for the router ID generation if the module is already managing an L3Out in the same tenant but different VRF"
   default     = 1
+
+  validation {
+    condition     = var.vrf_id >= 1 && var.vrf_id <= 254
+    error_message = "Value has to be between 1 and 254"
+  }
 }
 
 variable "l3_domain" {
