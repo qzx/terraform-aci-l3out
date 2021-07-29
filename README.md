@@ -4,7 +4,7 @@ Manages ACI L3Out
 Location in GUI:
 `Tenants/Networking/L3Outs`
 ## Examples
-# Minimal L3Out config
+### Minimal L3Out config
 ```hcl
 module "aci_l3out" {
   source  = "qzx/l3out/aci"
@@ -31,7 +31,7 @@ module "aci_l3out" {
 }
 ```
 
-# L3Out over dual VPC in two pods with OSPF
+### L3Out over dual VPC in two pods with OSPF
 ```hcl
 module "aci_vpc_l3out" {
   source  = "qzx/l3out/aci"
@@ -81,7 +81,7 @@ module "aci_vpc_l3out" {
 }
 ```
 
-# Dual L3Out with BGP 
+### Dual L3Out with BGP 
 ```hcl
 module "aci_ha_mpls_l3out" {
   source  = "qzx/l3out/aci"
