@@ -10,17 +10,20 @@
 
 ### Load in the tenant we're going to be working with as a data source
 data "aci_tenant" "this" {
-  name = local.tenant_name
+  name       = local.tenant_name
+  annotation = "orchestrator:terraform"
 }
 
 ### Load in the VRF we're deploying into as data source
 data "aci_vrf" "this" {
-  tenant_dn = data.aci_tenant.this.id
-  name      = local.vrf
+  tenant_dn  = data.aci_tenant.this.id
+  annotation = "orchestrator:terraform"
+  name       = local.vrf
 }
 
 data "aci_l3_domain_profile" "this" {
-  name = local.domain
+  annotation = "orchestrator:terraform"
+  name       = local.domain
 }
 
 resource "aci_l3_outside" "this" {
@@ -73,10 +76,11 @@ resource "aci_logical_interface_profile" "this" {
 data "aci_fabric_path_ep" "this" {
   for_each = local.paths
 
-  vpc     = each.value.is_vpc
-  pod_id  = each.value.pod_id
-  node_id = join("-", each.value.nodes)
-  name    = each.value.name
+  vpc        = each.value.is_vpc
+  pod_id     = each.value.pod_id
+  node_id    = join("-", each.value.nodes)
+  name       = each.value.name
+  annotation = "orchestrator:terraform"
 }
 
 resource "aci_l3out_path_attachment" "this" {
