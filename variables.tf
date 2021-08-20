@@ -153,7 +153,7 @@ variable "inbound_filter" {
 }
 
 locals {
-  ospf_area   = var.ospf_enable ? { area = var.ospf_area == 0 ? "backbone" : var.ospf_area } : {}
+  ospf_area   = var.ospf_enable ? { area = var.ospf_area.id == 0 ? "backbone" : var.ospf_area } : {}
   ospf_timers = var.ospf_enable ? { timers = var.ospf_timers } : {}
   ospf_auth   = var.ospf_enable ? { auth = var.ospf_auth } : {}
 }
