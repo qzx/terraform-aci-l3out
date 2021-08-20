@@ -29,6 +29,7 @@ resource "aci_l3_outside" "this" {
 
   name                         = local.name
   relation_l3ext_rs_l3_dom_att = data.aci_l3_domain_profile.this.id
+  enforce_rtctrl               = local.enforce_route_control
 }
 
 resource "aci_logical_node_profile" "this" {
@@ -114,7 +115,6 @@ resource "aci_l3out_static_route" "this" {
   fabric_node_dn = aci_logical_node_to_fabric_node.this[each.value.node].id
   ip             = each.value.subnet
   aggregate      = "no"
-  rt_ctrl        = "bfd"
 }
 
 resource "aci_l3out_static_route_next_hop" "this" {

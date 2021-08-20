@@ -106,7 +106,7 @@ module "aci_ha_mpls_l3out" {
       mtu                 = 1500
       interconnect_subnet = "172.16.1.0/29"
     },
-    primary = {
+    secondary = {
       name                = "eth1/22"
       pod_id              = 1
       nodes               = [102]
@@ -173,6 +173,7 @@ module "aci_ha_mpls_l3out" {
 | <a name="input_ospf_timers"></a> [ospf\_timers](#input\_ospf\_timers) | Optional ospf timing configuration to pass on, sensible defaults are provided | <pre>object({<br>    hello_interval      = number,<br>    dead_interval       = number,<br>    retransmit_interval = number,<br>    transmit_delay      = number,<br>    priority            = number,<br>  })</pre> | <pre>{<br>  "dead_interval": 40,<br>  "hello_interval": 10,<br>  "priority": 1,<br>  "retransmit_interval": 5,<br>  "transmit_delay": 1<br>}</pre> | no |
 | <a name="input_ospf_auth"></a> [ospf\_auth](#input\_ospf\_auth) | OSPF authentication settings if ospf is enabled, key\_id can range from 1-255 and key\_type can be: md5, simple or none | <pre>object({<br>    key    = string,<br>    key_id = number,<br>    type   = string,<br>  })</pre> | <pre>{<br>  "key": "",<br>  "key_id": 1,<br>  "type": "none"<br>}</pre> | no |
 | <a name="input_bgp_peers"></a> [bgp\_peers](#input\_bgp\_peers) | BGP Neighbour configuration, having a neighbour causes BGP to be enabled, nodes must have loopbacks (enable router\_id\_as\_loopback) | <pre>map(object({<br>    address   = string,<br>    local_as  = number,<br>    remote_as = number,<br>    password  = string,<br>  }))</pre> | `{}` | no |
+| <a name="input_inbound_filter"></a> [inbound\_filter](#input\_inbound\_filter) | If enabled the module will create inbound filter lists based on the subnets in the EPGs provided and enforce inbound filtering | `bool` | `false` | no |
 ## Outputs
 
 | Name | Description |

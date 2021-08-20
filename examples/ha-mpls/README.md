@@ -30,7 +30,7 @@ module "aci_ha_mpls_l3out" {
       mtu                 = 1500
       interconnect_subnet = "172.16.1.0/29"
     },
-    primary = {
+    secondary = {
       name                = "eth1/22"
       pod_id              = 1
       nodes               = [102]

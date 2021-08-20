@@ -146,8 +146,14 @@ variable "bgp_peers" {
   default     = {}
 }
 
+variable "inbound_filter" {
+  type        = bool
+  description = "If enabled the module will create inbound filter lists based on the subnets in the EPGs provided and enforce inbound filtering"
+  default     = false
+}
+
 locals {
-  ospf_area   = var.ospf_enable ? { area = var.ospf_area } : {}
+  ospf_area   = var.ospf_enable ? { area = var.ospf_area == 0 ? "backbone" : var.ospf_area } : {}
   ospf_timers = var.ospf_enable ? { timers = var.ospf_timers } : {}
   ospf_auth   = var.ospf_enable ? { auth = var.ospf_auth } : {}
 }
@@ -269,5 +275,5 @@ locals {
   external_subnets = {
     for subnet in local.external_subnet_list : subnet.key => subnet
   }
+  enforce_route_control = var.inbound_filter ? ["export", "import"] : ["export"]
 }
- 
