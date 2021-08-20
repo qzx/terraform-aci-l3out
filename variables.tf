@@ -210,6 +210,7 @@ locals {
 locals {
   paths = {
     for key, path in var.paths : key => {
+      path_dn = "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]"
       name    = path.name,
       pod_id  = path.pod_id,
       nodes   = path.nodes,

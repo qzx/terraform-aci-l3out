@@ -77,6 +77,7 @@ resource "aci_logical_interface_profile" "this" {
   name                    = "${local.name}-Intf"
 }
 
+/*
 data "aci_fabric_path_ep" "this" {
   for_each = local.paths
 
@@ -86,16 +87,18 @@ data "aci_fabric_path_ep" "this" {
   name       = each.value.name
   annotation = "orchestrator:terraform"
 }
+*/
 
 resource "aci_l3out_path_attachment" "this" {
   for_each = local.paths
 
   logical_interface_profile_dn = aci_logical_interface_profile.this.id
-  target_dn                    = data.aci_fabric_path_ep.this[each.key].id
-  if_inst_t                    = "ext-svi"
-  encap                        = "vlan-${each.value.vlan_id}"
-  mtu                          = each.value.mtu
-  addr                         = each.value.address
+  #  target_dn                    = data.aci_fabric_path_ep.this[each.key].id
+  target_dn = local.paths[each.key].path_dn
+  if_inst_t = "ext-svi"
+  encap     = "vlan-${each.value.vlan_id}"
+  mtu       = each.value.mtu
+  addr      = each.value.address
 }
 
 
