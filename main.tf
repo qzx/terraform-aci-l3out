@@ -8,6 +8,7 @@
  * 
  */
 
+/*
 ### Load in the tenant we're going to be working with as a data source
 data "aci_tenant" "this" {
   name       = local.tenant_name
@@ -25,14 +26,17 @@ data "aci_l3_domain_profile" "this" {
   annotation = "orchestrator:terraform"
   name       = local.domain
 }
+*/
 
 resource "aci_l3_outside" "this" {
-  tenant_dn              = data.aci_tenant.this.id
-  relation_l3ext_rs_ectx = data.aci_vrf.this.id
-
+  #  tenant_dn              = data.aci_tenant.this.id
+  tenant_dn = local.tenant_dn
+  #  relation_l3ext_rs_ectx = data.aci_vrf.this.id
+  relation_l3ext_rs_ectx       = local.vrf_dn
   name                         = local.name
-  relation_l3ext_rs_l3_dom_att = data.aci_l3_domain_profile.this.id
-  enforce_rtctrl               = local.enforce_route_control
+  relation_l3ext_rs_l3_dom_att = local.l3dom_dn
+  #  relation_l3ext_rs_l3_dom_att = data.aci_l3_domain_profile.this.id
+  enforce_rtctrl = local.enforce_route_control
 }
 
 resource "aci_logical_node_profile" "this" {
@@ -133,7 +137,8 @@ resource "aci_l3out_static_route_next_hop" "this" {
 resource "aci_ospf_interface_policy" "this" {
   for_each = local.ospf_timers
 
-  tenant_dn    = data.aci_tenant.this.id
+  #  tenant_dn    = data.aci_tenant.this.id
+  tenant_dn    = local.tenant_dn
   name         = "${var.tenant_name}-OSPF-Pol"
   hello_intvl  = each.value.hello_interval
   dead_intvl   = each.value.dead_interval

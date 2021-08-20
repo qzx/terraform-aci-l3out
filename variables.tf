@@ -250,6 +250,22 @@ locals {
 }
 
 locals {
+  tenant_dn = join("-", ["uni/tn", local.tenant_name])
+}
+
+locals {
+  vrf_rn = join("/", [local.tenant_dn, "ctx"])
+}
+
+locals {
+  vrf_dn = join("-", [local.vrf_rn, var.vrf])
+}
+
+locals {
+  l3dom_dn = join("-", ["uni/l3dom", var.l3_domain])
+}
+
+locals {
   static_route_list = flatten([
     for node in local.nodes : [
       for subnet in var.static_routes : {

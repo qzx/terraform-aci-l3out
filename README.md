@@ -200,7 +200,4 @@ module "aci_ha_mpls_l3out" {
 | [aci_logical_node_to_fabric_node.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/logical_node_to_fabric_node) | resource |
 | [aci_ospf_interface_policy.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/ospf_interface_policy) | resource |
 | [aci_fabric_path_ep.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/data-sources/fabric_path_ep) | data source |
-| [aci_l3_domain_profile.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/data-sources/l3_domain_profile) | data source |
-| [aci_tenant.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/data-sources/tenant) | data source |
-| [aci_vrf.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/data-sources/vrf) | data source |
 <!-- END_TF_DOCS -->
