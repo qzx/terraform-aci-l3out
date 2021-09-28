@@ -91,13 +91,13 @@ variable "ospf_enable" {
 
 variable "ospf_area" {
   type = object({
-    id   = number,
+    id   = string,
     type = string,
     cost = number,
   })
   description = "OSPF Area settings"
   default = {
-    id   = 0
+    id   = "backbone"
     type = "regular"
     cost = 1
   }
