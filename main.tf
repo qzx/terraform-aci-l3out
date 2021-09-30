@@ -77,6 +77,13 @@ resource "aci_logical_interface_profile" "this" {
   name                    = "${local.name}-Intf"
 }
 
+resource "aci_logical_interface_profile" "thisv6" {
+  for_each = local.v6_intf_profile
+
+  logical_node_profile_dn = aci_logical_node_profile.this.id
+  name                    = "${local.name}-Intf_v6"
+}
+
 /*
 data "aci_fabric_path_ep" "this" {
   for_each = local.paths
@@ -110,10 +117,38 @@ resource "aci_l3out_vpc_member" "this" {
   addr         = each.value.ip_address
 }
 
+resource "aci_l3out_path_attachment" "thisv6" {
+  for_each = local.pathsv6
+
+  logical_interface_profile_dn = aci_logical_interface_profile.thisv6["v6"].id
+  #  target_dn                    = data.aci_fabric_path_ep.this[each.key].id
+  target_dn = local.paths[each.key].path_dn
+  if_inst_t = "ext-svi"
+  encap     = "vlan-${each.value.vlan_id}"
+  mtu       = each.value.mtu
+  addr      = each.value.address
+}
+
+
+resource "aci_l3out_vpc_member" "thisv6" {
+  for_each = local.vpc_ip_addressesv6
+
+  leaf_port_dn = aci_l3out_path_attachment.thisv6[each.value.path_key].id
+  side         = each.value.side
+  addr         = each.value.ip_address
+}
+
 resource "aci_l3out_path_attachment_secondary_ip" "this" {
   for_each = local.vpc_ip_addresses
 
   l3out_path_attachment_dn = aci_l3out_vpc_member.this[each.key].id
+  addr                     = each.value.floating_address
+}
+
+resource "aci_l3out_path_attachment_secondary_ip" "thisv6" {
+  for_each = local.vpc_ip_addressesv6
+
+  l3out_path_attachment_dn = aci_l3out_vpc_member.thisv6[each.key].id
   addr                     = each.value.floating_address
 }
 

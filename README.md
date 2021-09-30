@@ -166,6 +166,7 @@ module "aci_ha_mpls_l3out" {
 | <a name="input_l3_domain"></a> [l3\_domain](#input\_l3\_domain) | The Layer3 domain this L3Out belongs to | `string` | n/a | yes |
 | <a name="input_router_id_as_loopback"></a> [router\_id\_as\_loopback](#input\_router\_id\_as\_loopback) | Set to true if router IDs should be installed as loopback addresses to respective switches | `bool` | `false` | no |
 | <a name="input_paths"></a> [paths](#input\_paths) | The interface path to which we will deploy the L3Out | <pre>map(object({<br>    name                = string,<br>    pod_id              = number,<br>    nodes               = list(number),<br>    is_vpc              = bool,<br>    vlan_id             = number,<br>    mtu                 = number,<br>    interconnect_subnet = string,<br>  }))</pre> | n/a | yes |
+| <a name="input_pathsv6"></a> [pathsv6](#input\_pathsv6) | The interface path to which we will deploy the L3Out IPv6 Address | <pre>map(object({<br>    name                = string,<br>    pod_id              = number,<br>    nodes               = list(number),<br>    is_vpc              = bool,<br>    vlan_id             = number,<br>    mtu                 = number,<br>    interconnect_subnet = string,<br>  }))</pre> | `{}` | no |
 | <a name="input_external_epgs"></a> [external\_epgs](#input\_external\_epgs) | Map of external EPGs to create as network objects | <pre>map(object({<br>    subnets = list(string),<br>    scope   = list(string),<br>  }))</pre> | <pre>{<br>  "default": {<br>    "scope": [<br>      "import-security"<br>    ],<br>    "subnets": [<br>      "0.0.0.0/0"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_static_routes"></a> [static\_routes](#input\_static\_routes) | List of subnets in CIDR notation to be statically routed to the first IP address of the interconnect subnet | `list(string)` | `[]` | no |
 | <a name="input_ospf_enable"></a> [ospf\_enable](#input\_ospf\_enable) | Enable OSPF, timers and area settings can be over written with ospf\_area and ospf\_timers | `bool` | `false` | no |
@@ -191,11 +192,15 @@ module "aci_ha_mpls_l3out" {
 | [aci_l3out_ospf_external_policy.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_ospf_external_policy) | resource |
 | [aci_l3out_ospf_interface_profile.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_ospf_interface_profile) | resource |
 | [aci_l3out_path_attachment.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_path_attachment) | resource |
+| [aci_l3out_path_attachment.thisv6](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_path_attachment) | resource |
 | [aci_l3out_path_attachment_secondary_ip.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_path_attachment_secondary_ip) | resource |
+| [aci_l3out_path_attachment_secondary_ip.thisv6](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_path_attachment_secondary_ip) | resource |
 | [aci_l3out_static_route.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_static_route) | resource |
 | [aci_l3out_static_route_next_hop.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_static_route_next_hop) | resource |
 | [aci_l3out_vpc_member.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_vpc_member) | resource |
+| [aci_l3out_vpc_member.thisv6](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/l3out_vpc_member) | resource |
 | [aci_logical_interface_profile.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/logical_interface_profile) | resource |
+| [aci_logical_interface_profile.thisv6](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/logical_interface_profile) | resource |
 | [aci_logical_node_profile.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/logical_node_profile) | resource |
 | [aci_logical_node_to_fabric_node.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/logical_node_to_fabric_node) | resource |
 | [aci_ospf_interface_policy.this](https://registry.terraform.io/providers/CiscoDevNet/aci/latest/docs/resources/ospf_interface_policy) | resource |

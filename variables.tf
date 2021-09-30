@@ -63,6 +63,20 @@ variable "paths" {
   description = "The interface path to which we will deploy the L3Out"
 }
 
+variable "pathsv6" {
+  type = map(object({
+    name                = string,
+    pod_id              = number,
+    nodes               = list(number),
+    is_vpc              = bool,
+    vlan_id             = number,
+    mtu                 = number,
+    interconnect_subnet = string,
+  }))
+  description = "The interface path to which we will deploy the L3Out IPv6 Address"
+  default     = {}
+}
+
 variable "external_epgs" {
   type = map(object({
     subnets = list(string),
@@ -181,6 +195,23 @@ locals {
 }
 
 locals {
+  node_listv6 = distinct(
+    flatten([
+      for path_key, path in var.pathsv6 : [
+        for node in path.nodes : {
+          node                = "topology/pod-${path.pod_id}/node-${node}"
+          router_id           = "1.${path.pod_id}.${node}.${var.vrf_id}"
+          path_key            = path_key
+          node_id             = node
+          is_vpc              = path.is_vpc
+          interconnect_subnet = path.interconnect_subnet
+        }
+      ]
+    ])
+  )
+}
+
+locals {
   vpc_ip_addresses = {
     for node in local.vpc_nodes : node.node => {
       path_key = node.path_key
@@ -189,6 +220,33 @@ locals {
           cidrhost(
             node.interconnect_subnet,
             (index(local.node_list, node) + 2)
+          ),
+          split("/", node.interconnect_subnet)[1]
+        ]
+      )
+      side = (node.node_id % 2 == 0 ? "B" : "A")
+      floating_address = join("/",
+        [
+          cidrhost(
+            node.interconnect_subnet,
+            -2
+          ),
+          split("/", node.interconnect_subnet)[1]
+        ]
+      )
+    }
+  }
+}
+
+locals {
+  vpc_ip_addressesv6 = {
+    for node in local.vpc_nodesv6 : node.node => {
+      path_key = node.path_key
+      ip_address = join("/",
+        [
+          cidrhost(
+            node.interconnect_subnet,
+            (index(local.node_listv6, node) + 2)
           ),
           split("/", node.interconnect_subnet)[1]
         ]
@@ -231,6 +289,30 @@ locals {
   }
   external_epgs = var.external_epgs
   vrf           = var.vrf
+}
+
+locals {
+  pathsv6 = {
+    for key, path in var.pathsv6 : key => {
+      path_dn = "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]"
+      name    = path.name,
+      pod_id  = path.pod_id,
+      nodes   = path.nodes,
+      is_vpc  = path.is_vpc,
+      vlan_id = path.vlan_id,
+      mtu     = path.mtu,
+      address = path.is_vpc ? "::/0" : join("/",
+        [
+          cidrhost(
+            path.interconnect_subnet,
+            -2
+          ),
+          split("/", path.interconnect_subnet)[1]
+        ]
+      )
+      interconnect_subnet = path.interconnect_subnet
+    }
+  }
 }
 
 
@@ -289,8 +371,12 @@ locals {
   vpc_nodes = {
     for node in local.node_list : node.node => node if node.is_vpc
   }
+  vpc_nodesv6 = {
+    for node in local.node_listv6 : node.node => node if node.is_vpc
+  }
   external_subnets = {
     for subnet in local.external_subnet_list : subnet.key => subnet
   }
   enforce_route_control = var.inbound_filter ? ["export", "import"] : ["export"]
+  v6_intf_profile       = length(local.node_listv6) > 0 ? { "v6" : "node" } : {}
 }
