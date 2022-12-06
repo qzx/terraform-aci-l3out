@@ -224,7 +224,7 @@ resource "aci_bgp_peer_connectivity_profile" "this" {
 resource "aci_bgp_peer_connectivity_profile" "intf_this" {
   for_each = local.intf_bgp_peers
 
-  parent_dn = aci_logical_interface_profile.this.id
+  parent_dn = aci_l3out_path_attachment.this[0].id
   addr      = each.value.address
   as_number = each.value.remote_as
   local_asn = each.value.local_as
