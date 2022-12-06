@@ -280,7 +280,7 @@ locals {
 locals {
   paths = {
     for key, path in var.paths : key => {
-      path_dn = "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]"
+      path_dn = len(path.nodes) > 1 ? "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]" : "topology/pod-${path.pod_id}/paths-${path.nodes[0]}/pathep-[${path.name}]"
       name    = path.name,
       pod_id  = path.pod_id,
       nodes   = path.nodes,
@@ -306,7 +306,7 @@ locals {
 locals {
   pathsv6 = {
     for key, path in var.pathsv6 : key => {
-      path_dn = "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]"
+      path_dn = len(path.nodes) > 1 ? "topology/pod-${path.pod_id}/protpaths-${join("-", path.nodes)}/pathep-[${path.name}]" : "topology/pod-${path.pod_id}/paths-${path.nodes[0]}/pathep-[${path.name}]"
       name    = path.name,
       pod_id  = path.pod_id,
       nodes   = path.nodes,
