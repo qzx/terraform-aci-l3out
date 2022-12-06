@@ -160,6 +160,17 @@ variable "bgp_peers" {
   default     = {}
 }
 
+variable "intf_bgp_peers" {
+  type = map(object({
+    address   = string,
+    local_as  = number,
+    remote_as = number,
+    password  = string,
+  }))
+  description = "BGP Neighbour configuration for interface bound profiles. no loopback required"
+  default     = {}
+}
+
 variable "inbound_filter" {
   type        = bool
   description = "If enabled the module will create inbound filter lists based on the subnets in the EPGs provided and enforce inbound filtering"
@@ -173,8 +184,9 @@ locals {
 }
 
 locals {
-  bgp_peers  = var.bgp_peers
-  bgp_enable = length(var.bgp_peers) > 0 ? { "enable" = "yes" } : {}
+  bgp_peers      = var.bgp_peers
+  intf_bgp_peers = var.intf_bgp_peers
+  bgp_enable     = length(var.bgp_peers) > 0 ? { "enable" = "yes" } : {}
 }
 
 locals {

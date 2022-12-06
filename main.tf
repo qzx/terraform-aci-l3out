@@ -215,8 +215,17 @@ resource "aci_l3out_bgp_external_policy" "this" {
 resource "aci_bgp_peer_connectivity_profile" "this" {
   for_each = local.bgp_peers
 
-  logical_node_profile_dn = aci_logical_node_profile.this.id
-  addr                    = each.value.address
-  as_number               = each.value.remote_as
-  local_asn               = each.value.local_as
+  parent_dn = aci_logical_node_profile.this.id
+  addr      = each.value.address
+  as_number = each.value.remote_as
+  local_asn = each.value.local_as
+}
+
+resource "aci_bgp_peer_connectivity_profile" "intf_this" {
+  for_each = local.intf_bgp_peers
+
+  parent_dn = aci_logical_interface_profile.this.id
+  addr      = each.value.address
+  as_number = each.value.remote_as
+  local_asn = each.value.local_as
 }
